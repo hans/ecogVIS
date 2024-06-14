@@ -250,7 +250,7 @@ class TimeSeriesPlotter:
 
         # Use the same scaling factor for all channels, to keep things comparable
         self.verticalScaleFactor = float(self.parent.qline4.text())
-        scaleFac = 2 * np.std(self.plotData[startSamp:endSamp, self.selectedChannels - 1], axis=0) / self.verticalScaleFactor
+        scaleFac = 2 * np.std(self.plotData[startSamp:endSamp][:, self.selectedChannels - 1], axis=0) / self.verticalScaleFactor
 
         # Scale variance_units, offset for each channel
         scale_va = np.max(scaleFac)
@@ -261,7 +261,7 @@ class TimeSeriesPlotter:
 
         # constrains the plotData to the chosen interval (and transpose matix)
         # plotData dims=[self.nChToShow, plotInterval]
-        data = self.plotData[startSamp:endSamp, self.selectedChannels].T
+        data = self.plotData[startSamp:endSamp][:, self.selectedChannels].T
         data = data[:, bins_to_plot - startSamp - 1]
         means = np.reshape(np.mean(data, 1), (-1, 1))  # to align each trace around its reference trace
         plotData = data + scaleV - means  # data + offset
@@ -886,10 +886,10 @@ class CustomAnnotation:
         self.session = ''
 
 
-class CustomBox(pg.pg.QtWidgets.QGraphicsRectItem):
+class CustomBox(pg.QtWidgets.QGraphicsRectItem):
     """Upper visualization window rectangle that can be dragged by the user."""
     def __init__(self, parent, x, y, w, h):
-        pg.pg.QtWidgets.QGraphicsRectItem.__init__(self, x, y, w, h)
+        pg.QtWidgets.QGraphicsRectItem.__init__(self, x, y, w, h)
         self.parent = parent
 
     def mouseReleaseEvent(self, event):
